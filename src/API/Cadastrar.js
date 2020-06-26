@@ -1,13 +1,14 @@
 // import axios from 'axios'
 const axios = require('axios')
-const cadastrarUsuario = () => {
+export default cadastrarUsuario = (nome, email) => {
 
-    axios.post('https://arbyte-todo-list-api.herokuapp.com/users', {
-        "fullName": "Guilherme de Souza",
-        "email": 'gs@gmail.com'
+     return axios.post(' https://arbyte-todo-list-api.herokuapp.com/users',{
+        "fullName": nome,
+        "email": email
     })
-        .then((res) => {
-            console.log(res.data)
-        })
+    .then(resposta => {
+        return resposta.data
+    }).catch(err => {console.log('catch', err)})
+       
 }
-cadastrarUsuario()
+// cadastrarUsuario()

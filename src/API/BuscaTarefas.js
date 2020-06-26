@@ -3,15 +3,15 @@
 const axios = require('axios')
 
 
-cadastrarTarefa = ( token) => {
+export default buscaTarefa = (token) => {
       axios({
         method: 'get',
         url: `https://arbyte-todo-list-api.herokuapp.com/tasks`,
         
-        headers: {'Authorization': token}
+        headers: {'Authorization': `Bearer ${token}`}
       }).then(function (response) {
         console.log(response.data);
       })
 }
-var p = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImlhdCI6MTU5MzAzOTA1OX0.M7A_BLnIIo5mXZT14KcPq1bNHXYR0KuSOpFeLs5otlk'
-cadastrarTarefa(p)
+// buscaTarefa(p)
+// var p = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImlhdCI6MTU5MzAzOTA1OX0.M7A_BLnIIo5mXZT14KcPq1bNHXYR0KuSOpFeLs5otlk'

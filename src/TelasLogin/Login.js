@@ -1,28 +1,46 @@
-import { View, Text, Button, StyleSheet, TextInput, Image } from "react-native"
-import React from 'react';
+import React, { useState } from 'react';
+import { View, Text, Button, StyleSheet, TextInput, Image, AsyncStorage, Alert } from "react-native"
 import arbyte from './../../assets/arbyte.png'
+import loginUsuario from '../API/Logar';
 
-export default TelaLogin=({navigation})=>{
-return(
-    <View style={styles.container}>
-        <Image source={arbyte} style={styles.image}/>
-        <TextInput style={styles.input} placeholder='Login Desabilitado'/>
-        <View style={styles.buttons}>
-        <Button color='#1631be'  onPress={()=>navigation.navigate('TelaTarefas')} title="Login"/>
-        <Button color='#1631be' onPress={()=>navigation.navigate('TelaCadastro')} title="Cadastro"/>
+export default TelaLogin = ({ navigation }) => {
+    const [emailUsu, setEmailUsu] = useState('')
+
+    const onPress = () => {
+        const email = emailUsu
+        if(email == ''){
+            Alert.alert('Insira um e-mail valido!')
+        }else{
+            loginUsuario(email)
+            .then(res => {
+                const token = res.data.token
+                const nome = res.data.user.fullName
+                AsyncStorage.setItem('token', JSON.stringify(token))
+                AsyncStorage.setItem('nome', JSON.stringify(nome))
+                navigation.navigate("TelaTarefas")
+            }).catch(()=>{Alert.alert("Insira uma conta existente","Ou crie uma conta em 'CADASTRAR'!")})
+        }
+    }
+    return (
+        <View style={styles.container}>
+            <Image source={arbyte} style={styles.image} />
+            <TextInput style={styles.input} placeholder='Informe seu E-mail' value={emailUsu} onChangeText={(text) => { setEmailUsu(text) }} />
+            <View style={styles.buttons}>
+                <Button color='#1631be' onPress={() => onPress()} title="Login" />
+                <Button color='#1631be' onPress={() => navigation.navigate('TelaCadastro')} title="Cadastro" />
+            </View>
         </View>
-    </View>
-)
+    )
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex:1, 
-        alignItems: 'center', 
-        justifyContent:'center',
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
         backgroundColor: '#edcf4a'
     },
-    
+
     input: {
         width: '90%',
         height: 40,
@@ -33,14 +51,14 @@ const styles = StyleSheet.create({
         borderRadius: 6,
         textAlign: 'center'
     },
-    image:{
-        width:250, height:60, marginBottom:50
+    image: {
+        width: 250, height: 60, marginBottom: 50
 
     },
-    buttons:{
-        
-        width: "90%", 
-        margin: 20 
-    
+    buttons: {
+
+        width: "90%",
+        margin: 20
+
     }
 })

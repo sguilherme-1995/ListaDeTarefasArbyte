@@ -15,8 +15,10 @@ import Tarefa from '../components/Tarefa'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import ActionButton, { } from 'react-native-action-button'
 import AddTarefa from '../components/AddTarefa'
-import { adicionaTarefa } from "../actions/action";
+import { adicionaTarefa, adicionaToken } from "../actions/action";
 import { connect } from 'react-redux'
+import cadastrarTarefa from './../API/Cadastrar'
+import deletaTarefa from './../API/DeletarTarefa'
 
 class TarefaHoje extends Component {
 
@@ -25,25 +27,31 @@ class TarefaHoje extends Component {
         visibleTask: [],
         showDoneTasks: true,
         showAddTask: false,
+        token: '',
     }
 
     addTask = task => {
         const tasks = [...this.state.tasks]
-        const { dispatch, tarefaRed } = this.props
+        const { dispatch, tarefaRed} = this.props
+        // const data = cadastrarTarefa(task.desc, task.doneAt, this.state.token)
+            
         tasks.push({
             id: Math.random(),
             desc: task.desc,
             estimateAt: task.date,
             doneAt: null,
+            // idApi: data,
         })
         this.setState({ tasks, showAddTask: false }, this.filterTask)
         dispatch(adicionaTarefa(tasks))
-        
+        cadastrarTarefa(task.desc, task.doneAt, this.state.token)
+
     }
     
     deleteTask = id => {
         const tasks = this.state.tasks.filter(task => task.id !== id)
         this.setState({ tasks }, this.filterTask)
+        // deletaTarefa(this.state.token, this.state.tasks.idApi)
     }
     
     filterTask = () => {
@@ -67,6 +75,11 @@ class TarefaHoje extends Component {
         const data = await AsyncStorage.getItem('tasks')
         const tasks = JSON.parse(data) || []
         this.setState({ tasks }, this.filterTask)
+        const tokenData = await AsyncStorage.getItem('token')
+        const token = JSON.parse(tokenData)
+        this.setState({ token })
+        // console.log('tokenzin',this.state.token)
+        
     }
 
     toggleTask = id => {
@@ -157,7 +170,8 @@ const styles = StyleSheet.create({
 
 const mapToStateProps = (store) => {
     return {
-        tarefaRed: store.tasks
+        tarefaRed: store.tasks,
+        token: store.token
     }
 }
 

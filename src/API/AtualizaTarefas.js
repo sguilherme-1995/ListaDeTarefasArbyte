@@ -3,17 +3,18 @@
 const axios = require('axios')
 
 
-atualizaTarefa = ( token) => {
+atualizaTarefa = (desc, token, idApi) => {
       axios({
         method: 'put',
-        url: `https://arbyte-todo-list-api.herokuapp.com/tasks/6`,
+        url: `https://arbyte-todo-list-api.herokuapp.com/tasks/${idApi}`,
         data: {
-            completed: true
+            completed: true,
+            desc: desc
         },
-        headers: {'Authorization': token}
+        headers: {'Authorization': `Bearer ${token}`}
       }).then(function (response) {
         console.log(response.data);
       })
 }
-var p = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImlhdCI6MTU5MzAzOTA1OX0.M7A_BLnIIo5mXZT14KcPq1bNHXYR0KuSOpFeLs5otlk'
-atualizaTarefa(p)
+// var p = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImlhdCI6MTU5MzAzOTA1OX0.M7A_BLnIIo5mXZT14KcPq1bNHXYR0KuSOpFeLs5otlk'
+// atualizaTarefa(p)

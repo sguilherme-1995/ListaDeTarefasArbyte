@@ -4,7 +4,7 @@ const axios = require('axios')
 
 
 export default cadastrarTarefa = ( desc, check, token) => {
-      axios({
+      return axios({
         method: 'post',
         url: `https://arbyte-todo-list-api.herokuapp.com/tasks`,
         data: {
@@ -12,8 +12,8 @@ export default cadastrarTarefa = ( desc, check, token) => {
             completed: check
         },
         headers: {'Authorization': token}
-      }).then(function (response) {
-        // console.log(response.data);
+      }).then(res => {
+        return res.data.id
       })
 }
 // var p = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImlhdCI6MTU5MzAzOTA1OX0.M7A_BLnIIo5mXZT14KcPq1bNHXYR0KuSOpFeLs5otlk'

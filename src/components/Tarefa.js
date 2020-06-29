@@ -1,13 +1,12 @@
 import React from 'react'
 import {StyleSheet, View, Text, TouchableWithoutFeedback, TouchableOpacity} from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
-import moment from 'moment'
 import 'moment/locale/pt-br'
 import Swipeable from 'react-native-swipeable'
 
 export default props => {
-    let check = null
-    if(props.doneAt !== null){
+    let check = false
+    if(props.completed !== false){
         check = (
             <View style={styles.done}>
                 <Icon name='check' size={20} color="white"></Icon>
@@ -17,7 +16,7 @@ export default props => {
         check = <View style={styles.pending}/>
     }
 
-    const descStyle = props.doneAt !== null ?
+    const descStyle = props.completed !== false ?
         {textDecorationLine: 'line-through'} : {}
 
         const leftContent = (
@@ -44,11 +43,8 @@ export default props => {
                 </TouchableWithoutFeedback>
                 <View>
                     <Text style={[styles.description, descStyle]}>
-                        {props.desc}
+                        {props.description}
                     </Text>
-        <Text style={styles.date}>
-            {moment(props.estimateAt).locale('pt-br').format('ddd, D [de] MMMM')}
-        </Text>
                 </View>
             </View>
         </Swipeable>

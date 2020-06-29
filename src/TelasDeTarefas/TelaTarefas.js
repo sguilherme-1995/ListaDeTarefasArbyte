@@ -1,7 +1,6 @@
 import 'react-native-gesture-handler'
-import { View, Text, Dimensions } from "react-native"
 import React from 'react';
-import { createDrawerNavigator, DrawerItem } from '@react-navigation/drawer';
+import { createDrawerNavigator} from '@react-navigation/drawer';
 import TarefasHoje from "./TarefasHoje";
 import Logout from "./Logout";
 const Drawer = createDrawerNavigator();

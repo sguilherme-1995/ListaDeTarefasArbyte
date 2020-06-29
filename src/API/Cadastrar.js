@@ -1,4 +1,3 @@
-// import axios from 'axios'
 const axios = require('axios')
 export default cadastrarUsuario = (nome, email) => {
 
@@ -11,4 +10,3 @@ export default cadastrarUsuario = (nome, email) => {
     }).catch(err => {console.log('catch', err)})
        
 }
-// cadastrarUsuario()

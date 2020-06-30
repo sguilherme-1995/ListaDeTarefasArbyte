@@ -1,8 +1,9 @@
-import React from 'react'
-import {StyleSheet, View, Text, TouchableWithoutFeedback, TouchableOpacity} from 'react-native'
+import React, { useState } from 'react'
+import {StyleSheet, View, Text, TouchableWithoutFeedback, TouchableOpacity, TextInput, AsyncStorage} from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import 'moment/locale/pt-br'
 import Swipeable from 'react-native-swipeable'
+import EditaTarefa from '../API/EditaTarefa'
 
 export default props => {
     let check = false
@@ -31,7 +32,23 @@ export default props => {
             onPress={() => props.onDelete(props.id)}>
                 <Icon name='trash' size={30} color='#FFF'/>
             </TouchableOpacity>,
-        ]
+        ]    
+
+        mudaTarefa = () => {
+            const [texto, setTexto] = useState(props.description)
+            return (
+                <View style={[styles.description, descStyle]}>
+                
+                <TextInput style={[styles.input, descStyle]}
+                        onChangeText={desc => {setTexto( desc )}}
+                        value={texto} 
+                        onEndEditing={(res) => {EditaTarefa(props.token, props.id, res.nativeEvent.text)}}
+                        maxLength={25}
+                        />
+                    </View>
+
+            )
+        }
 
         return(
         <Swipeable leftActionActivationDistance={200}
@@ -42,9 +59,7 @@ export default props => {
                     <View style={styles.checkContainer}>{check}</View>
                 </TouchableWithoutFeedback>
                 <View>
-                    <Text style={[styles.description, descStyle]}>
-                        {props.description}
-                    </Text>
+                        {mudaTarefa()}
                 </View>
             </View>
         </Swipeable>
@@ -101,6 +116,16 @@ const styles = StyleSheet.create({
         color: '#FFF',
         fontSize: 20,
         margin: 10
-    }
+    },
+    input: {
+        width: 260,
+        height: 40,
+        // marginTop: 10,
+        marginLeft: -15,
+        // backgroundColor: 'white',
+        borderWidth: 1,
+        borderColor: '#e3e3e3',
+        borderRadius: 6
+    },
 })
 

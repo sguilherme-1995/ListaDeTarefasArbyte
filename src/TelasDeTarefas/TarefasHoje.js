@@ -28,24 +28,12 @@ class TarefaHoje extends Component {
         showAddTask: false,
         token: '',
         user: {},
-        tarefaFeitas: []
     }
-
-    // tarefasFeitas=()=>{
-    //     const feitas = this.state.tarefaFeitas
-    //     const tarefas = this.state.tasks
-    //     tarefas.map(completa=> {
-    //         if(completa.completed == true){
-    //             feitas.push(completa)
-    //             console.log(feitas)
-    //         }
-    //     })
-    // }
 
     addTask = task => {
         const tasks = [...this.state.tasks]
         console.log(tasks)
-        const { dispatch, tarefaRed } = this.props
+        const { dispatch } = this.props
 
 
         cadastrarTarefa(task.desc, this.state.token)
@@ -59,45 +47,52 @@ class TarefaHoje extends Component {
             })
             .catch(e => console.log(e.response.data))
         dispatch(adicionaTarefa(tasks))
-        this.setState({showAddTask: false})
+        this.setState({ showAddTask: false })
 
     }
 
     deleteTask = id => {
         const tasks = this.state.tasks.filter(task => {
             task.id !== id
-            if(task.id === id){
+            if (task.id === id) {
                 deletaTarefa(this.state.token, task.id)
             }
         })
         buscaTarefa(this.state.token)
             .then(res => {
-                this.setState({tasks: res})
+                this.setState({ tasks: res })
             })
         console.log(tasks)
     }
 
     filterTask = () => {
-        atualizaTarefa( this.state.token, this.state.tasks.id, this.state.tasks.completed)
+        atualizaTarefa(this.state.token, this.state.tasks.id, this.state.tasks.completed)
             .then(resposta => {
                 console.log(resposta)
             }).catch(err => console.log(err))
     }
 
     componentDidMount = async () => {
-    const {navigation} = this.props
-        const tokenData = await AsyncStorage.getItem('token')
-        const token = JSON.parse(tokenData)
-        const userData = await AsyncStorage.getItem('user')
-        const user = JSON.parse(userData)
-        this.setState({ token })
-        buscaTarefa(token)
-            .then(res => {
-                this.setState({tasks: res})
-            })
-        this.setState({ user }
+        const { navigation } = this.props
+        const email = await AsyncStorage.getItem('@email')
+        const logado = JSON.parse(email)
+        console.log("TarefaHoje -> componentDidMount -> logado", logado)
+        if (logado === null) {
+            navigation.navigate('TelaLogin')
+        } else {
+            const tokenData = await AsyncStorage.getItem('token')
+            const token = JSON.parse(tokenData)
+            const userData = await AsyncStorage.getItem('user')
+            const user = JSON.parse(userData)
+            buscaTarefa(token)
+                .then(res => {
+                    this.setState({ tasks: res })
+                    this.setState({ token })
+                })
+            this.setState({ user }
             )
             console.log("TarefaHoje -> componentDidMount -> user", user)
+        }
     }
 
     toggleTask = id => {
@@ -122,14 +117,6 @@ class TarefaHoje extends Component {
                 ></AddTarefa>
                 <ImageBackground source={todayImage}
                     style={styles.background}>
-                    {/* <View style={styles.iconBar}>
-                        <TouchableOpacity onPress={this.tarefasFeitas}>
-                            <Icon name={this.state.tarefaFeitas ? 'eye' : 'eye-slash'}
-                                size={20} color={'white'}
-                            />
-                        </TouchableOpacity>
-
-                    </View> */}
                     <View style={styles.titleBar}>
                         <Text style={styles.title}>Hoje</Text>
                         <Text style={styles.subTitle}>
@@ -141,10 +128,11 @@ class TarefaHoje extends Component {
                         keyExtractor={item => `${item.id}`}
                         renderItem={({ item }) =>
                             <Tarefa {...item}
+                                token={this.state.token}
                                 toggleTask={this.toggleTask}
                                 onDelete={this.deleteTask}
                             />} />
-                            
+
 
                 </View>
                 <ActionButton buttonColor={'red'}

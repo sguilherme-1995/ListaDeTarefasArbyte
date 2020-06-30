@@ -9,7 +9,11 @@ export default Logout = ({ navigation }) => {
             'Logout',
             [
                 { text: 'Não', onPress: () => { navigation.navigate('TelaTarefas') } },
-                { text: 'Sim', onPress: () => { navigation.navigate('TelaLogin') } },
+                { text: 'Sim', onPress: () => { 
+                    AsyncStorage.setItem('@email', JSON.stringify(null))
+                    navigation.navigate('TelaLogin')
+                    
+                } },
             ]
         )
 

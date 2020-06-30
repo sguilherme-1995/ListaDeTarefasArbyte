@@ -10,19 +10,20 @@ export default TelaLogin = ({route, navigation}) => {
         const email = emailUsu
         if(email === ''){
             Alert.alert('Insira um e-mail valido!')
-        }
+        }else{
             loginUsuario(email)
             .then(res => {
+                AsyncStorage.setItem('@email', JSON.stringify(email))
                 const token = res.token
                 const nome = res.user.fullName
                 const name = res
                 AsyncStorage.setItem('token', JSON.stringify(token))
                 AsyncStorage.setItem('nome', JSON.stringify(nome))
                 AsyncStorage.setItem('user', JSON.stringify(name))
-                navigation.navigate("TelaTarefas",{nome: nome, token: token})
+                navigation.push("TelaTarefas",{nome: nome, token: token})
              })
             .catch(()=>{Alert.alert("Insira uma conta existente","Ou crie uma conta em 'CADASTRAR'!")})
-        
+            }
     }
     return (
         <View style={styles.container}>

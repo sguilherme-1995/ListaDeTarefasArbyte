@@ -41,7 +41,7 @@ export default class AddTarefa extends Component {
                     <Text style={styles.header}>Nova Tarefa!</Text>
                     <TextInput placeholder='Descrição...' style={styles.input}
                         onChangeText={desc => this.setState({ desc })}
-                        value={this.state.desc} />
+                        value={this.state.desc} maxLength={25}/>
                     <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
                         <TouchableOpacity onPress={this.props.onCancel}>
                             <Text style={styles.button}>Cancelar</Text>

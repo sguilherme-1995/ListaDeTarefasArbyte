@@ -1,25 +1,29 @@
 import React, { useState } from 'react';
-import { View, Text, Button, StyleSheet, TextInput, Image, AsyncStorage, Alert } from "react-native"
+import { View, Button, StyleSheet, TextInput, Image, AsyncStorage, Alert } from "react-native"
 import arbyte from './../../assets/arbyte.png'
 import loginUsuario from '../API/Logar';
 
-export default TelaLogin = ({ navigation }) => {
+export default TelaLogin = ({route, navigation}) => {
     const [emailUsu, setEmailUsu] = useState('')
 
     const onPress = () => {
         const email = emailUsu
-        if(email == ''){
+        if(email === ''){
             Alert.alert('Insira um e-mail valido!')
         }else{
             loginUsuario(email)
             .then(res => {
-                const token = res.data.token
-                const nome = res.data.user.fullName
+                AsyncStorage.setItem('@email', JSON.stringify(email))
+                const token = res.token
+                const nome = res.user.fullName
+                const name = res
                 AsyncStorage.setItem('token', JSON.stringify(token))
                 AsyncStorage.setItem('nome', JSON.stringify(nome))
-                navigation.navigate("TelaTarefas")
-            }).catch(()=>{Alert.alert("Insira uma conta existente","Ou crie uma conta em 'CADASTRAR'!")})
-        }
+                AsyncStorage.setItem('user', JSON.stringify(name))
+                navigation.push("TelaTarefas",{nome: nome, token: token})
+             })
+            .catch(()=>{Alert.alert("Insira uma conta existente","Ou crie uma conta em 'CADASTRAR'!")})
+            }
     }
     return (
         <View style={styles.container}>

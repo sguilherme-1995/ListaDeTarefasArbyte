@@ -17,84 +17,98 @@ import ActionButton, { } from 'react-native-action-button'
 import AddTarefa from '../components/AddTarefa'
 import { adicionaTarefa, adicionaToken } from "../actions/action";
 import { connect } from 'react-redux'
-import cadastrarTarefa from './../API/Cadastrar'
+import cadastrarTarefa from './../API/Tarefas'
 import deletaTarefa from './../API/DeletarTarefa'
+import atualizaTarefa from './../API/AtualizaTarefas'
+import buscaTarefa from './../API/BuscaTarefas'
 
 class TarefaHoje extends Component {
-
     state = {
         tasks: [],
-        visibleTask: [],
-        showDoneTasks: true,
         showAddTask: false,
         token: '',
+        user: {},
     }
 
     addTask = task => {
         const tasks = [...this.state.tasks]
-        const { dispatch, tarefaRed} = this.props
-        // const data = cadastrarTarefa(task.desc, task.doneAt, this.state.token)
-            
-        tasks.push({
-            id: Math.random(),
-            desc: task.desc,
-            estimateAt: task.date,
-            doneAt: null,
-            // idApi: data,
-        })
-        this.setState({ tasks, showAddTask: false }, this.filterTask)
+        console.log(tasks)
+        const { dispatch } = this.props
+
+
+        cadastrarTarefa(task.desc, this.state.token)
+            .then(resposta => {
+                console.log(resposta.id)
+                tasks.push(resposta)
+                this.setState({
+                    tasks
+                })
+                console.log("TarefaHoje -> resposta", this.state.tasks)
+            })
+            .catch(e => console.log(e.response.data))
         dispatch(adicionaTarefa(tasks))
-        cadastrarTarefa(task.desc, task.doneAt, this.state.token)
+        this.setState({ showAddTask: false })
 
     }
-    
+
     deleteTask = id => {
-        const tasks = this.state.tasks.filter(task => task.id !== id)
-        this.setState({ tasks }, this.filterTask)
-        // deletaTarefa(this.state.token, this.state.tasks.idApi)
+        const tasks = this.state.tasks.filter(task => {
+            task.id !== id
+            if (task.id === id) {
+                deletaTarefa(this.state.token, task.id)
+            }
+        })
+        buscaTarefa(this.state.token)
+            .then(res => {
+                this.setState({ tasks: res })
+            })
+        console.log(tasks)
     }
-    
+
     filterTask = () => {
-        let visibleTask = null
-        if (this.state.showDoneTasks) {
-            visibleTask = [...this.state.tasks]
-        } else {
-            const pending = task => task.doneAt === null
-            visibleTask = this.state.tasks.filter(pending)
-        }
-        this.setState({ visibleTask })
-        AsyncStorage.setItem('tasks', JSON.stringify(this.state.tasks))
-
-    }
-
-    toggleFilter = () => {
-        this.setState({ showDoneTasks: !this.state.showDoneTasks }, this.filterTask)
+        atualizaTarefa(this.state.token, this.state.tasks.id, this.state.tasks.completed)
+            .then(resposta => {
+                console.log(resposta)
+            }).catch(err => console.log(err))
     }
 
     componentDidMount = async () => {
-        const data = await AsyncStorage.getItem('tasks')
-        const tasks = JSON.parse(data) || []
-        this.setState({ tasks }, this.filterTask)
-        const tokenData = await AsyncStorage.getItem('token')
-        const token = JSON.parse(tokenData)
-        this.setState({ token })
-        // console.log('tokenzin',this.state.token)
-        
+        const { navigation } = this.props
+        const email = await AsyncStorage.getItem('@email')
+        const logado = JSON.parse(email)
+        console.log("TarefaHoje -> componentDidMount -> logado", logado)
+        if (logado === null) {
+            navigation.navigate('TelaLogin')
+        } else {
+            const tokenData = await AsyncStorage.getItem('token')
+            const token = JSON.parse(tokenData)
+            const userData = await AsyncStorage.getItem('user')
+            const user = JSON.parse(userData)
+            buscaTarefa(token)
+                .then(res => {
+                    this.setState({ tasks: res })
+                    this.setState({ token })
+                })
+            this.setState({ user }
+            )
+            console.log("TarefaHoje -> componentDidMount -> user", user)
+        }
     }
 
     toggleTask = id => {
         const tasks = this.state.tasks.map(task => {
             if (task.id === id) {
-                task = { ...task }
-                task.doneAt = task.doneAt ? null : new Date()
+                atualizaTarefa(this.state.token, task.id, task.completed)
+                task.completed = !task.completed
             }
             return task
         })
 
-        this.setState({ tasks }, this.filterTask)
+        this.setState({ tasks }
+        )
+
     }
     render() {
-        { console.log() }
         return (
             <View style={styles.container}>
                 <AddTarefa isVisible={this.state.showAddTask}
@@ -103,14 +117,6 @@ class TarefaHoje extends Component {
                 ></AddTarefa>
                 <ImageBackground source={todayImage}
                     style={styles.background}>
-                    <View style={styles.iconBar}>
-                        <TouchableOpacity onPress={this.toggleFilter}>
-                            <Icon name={this.state.showDoneTasks ? 'eye' : 'eye-slash'}
-                                size={20} color={'white'}
-                            />
-                        </TouchableOpacity>
-
-                    </View>
                     <View style={styles.titleBar}>
                         <Text style={styles.title}>Hoje</Text>
                         <Text style={styles.subTitle}>
@@ -118,13 +124,15 @@ class TarefaHoje extends Component {
                     </View>
                 </ImageBackground>
                 <View style={styles.taskContainer}>
-                    <FlatList data={this.state.visibleTask}
+                    <FlatList data={this.state.tasks}
                         keyExtractor={item => `${item.id}`}
                         renderItem={({ item }) =>
                             <Tarefa {...item}
+                                token={this.state.token}
                                 toggleTask={this.toggleTask}
                                 onDelete={this.deleteTask}
                             />} />
+
 
                 </View>
                 <ActionButton buttonColor={'red'}

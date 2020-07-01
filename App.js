@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, AsyncStorage, StatusBar } from 'react-native';
+import { StyleSheet, StatusBar } from 'react-native';
 import {createStore} from 'redux';
 import {Provider} from 'react-redux';
 import { NavigationContainer } from '@react-navigation/native';
@@ -17,7 +17,7 @@ export default function App() {
     <NavigationContainer>
       <StatusBar/>
         <Stack.Navigator 
-        initialRouteName="TelaLogin"
+        initialRouteName="TelaTarefas"
         screenOptions={{ headerShown: false}}>
           <Stack.Screen name="TelaLogin" component={TelaLogin}/>
           <Stack.Screen name="TelaCadastro" component={TelaCadastro} />

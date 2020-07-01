@@ -2,29 +2,29 @@ import { View, Text, Alert, Button, StyleSheet, AsyncStorage } from "react-nativ
 import React from 'react';
 import loginUsuario from './../API/Logar'
 
-export default Logout = ({navigation})=>{
-
-    const nome = AsyncStorage.getItem('nome')
-    const nomeUsuario = JSON.parse(nome)
-    
-    const alertaSair = ()=> {
+export default Logout = ({ navigation }) => {
+    const alertaSair = () => {
         Alert.alert(
-            'Você deseja sair da sua conta?', 
+            'Você deseja sair da sua conta?',
             'Logout',
             [
-                {text: 'Não', onPress: ()=>{navigation.navigate('TelaTarefas')}},
-                {text: 'Sim', onPress: ()=>{navigation.navigate('TelaLogin')}},
+                { text: 'Não', onPress: () => { navigation.navigate('TelaTarefas') } },
+                { text: 'Sim', onPress: () => { 
+                    AsyncStorage.setItem('@email', JSON.stringify(null))
+                    navigation.navigate('TelaLogin')
+                    
+                } },
             ]
-            )    
-    }    
-    
-    console.log(nomeUsuario)
-    return(
-        
+        )
+
+    }
+
+    return (
+
         <View style={styles.container}>
-            <Text style={styles.text}>{nomeUsuario}</Text>
+            <Text style={styles.text}></Text>
             <View style={styles.buttons}>
-            <Button color='#1631be' title="Sair da Conta" onPress={()=>alertaSair()}/>
+                <Button color='#1631be' title="Sair da Conta" onPress={() => alertaSair()} />
             </View>
         </View>
     )
@@ -32,18 +32,18 @@ export default Logout = ({navigation})=>{
 
 const styles = StyleSheet.create({
     container: {
-        flex:1, 
-        alignItems: 'center', 
-        justifyContent:'space-around',
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'space-around',
         backgroundColor: '#edcf4a',
 
     },
-    buttons:{
-        
-        width: "90%", 
-        margin: 20 
-    
-    }, 
+    buttons: {
+
+        width: "90%",
+        margin: 20
+
+    },
     text: {
         fontSize: 30,
         fontWeight: 'bold'
